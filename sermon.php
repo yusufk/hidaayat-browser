@@ -1,12 +1,15 @@
 <?php
 /*
-Plugin Name: Sermon Browser
-Plugin URI: http://www.sermonbrowser.com/
-Description: Upload sermons to your website, where they can be searched, listened to, and downloaded. Easy to use with comprehensive help and tutorials.
-Author: Mark Barnes
-Version: 0.45.4
-Author URI: http://www.4-14.org.uk/
+Plugin Name: Hidaayat Browser
+Plugin URI: https://github.com/yusufk/hidaayat-browser
+Description: Upload talks to your website, where they can be searched, listened to, and downloaded. Easy to use with comprehensive help and tutorials.
+Author: Yusuf Kaka
+Version: 0.1
+Author URI: http://www.yusufk.za.net/
 
+Copyright (c) 2013 Yusuf Kaka
+
+This program incorporates a modified version of Other Program.
 Copyright (c) 2008-2011 Mark Barnes
 
 This program is free software: you can redistribute it and/or modify
@@ -53,12 +56,12 @@ The frontend output is inserted by sb_shortcode
 * Sets version constants and basic Wordpress hooks.
 * @package common_functions
 */
-define('SB_CURRENT_VERSION', '0.45.4');
-define('SB_DATABASE_VERSION', '1.7');
+define('HB_CURRENT_VERSION', '0.1');
+define('HB_DATABASE_VERSION', '0.1');
 sb_define_constants();
-add_action ('plugins_loaded', 'sb_hijack');
-add_action ('init', 'sb_sermon_init');
-add_action ('widgets_init', 'sb_widget_sermon_init');
+add_action ('plugins_loaded', 'hb_hijack');
+add_action ('init', 'hb_sermon_init');
+add_action ('widgets_init', 'hb_widget_sermon_init');
 
 if (version_compare(PHP_VERSION, '5.0.0', '<'))
 	require(SB_INCLUDES_DIR.'/php4compat.php');
@@ -69,7 +72,7 @@ if (version_compare(PHP_VERSION, '5.0.0', '<'))
 * Intercepts Wordpress at earliest opportunity. Checks whether the following are required before the full framework is loaded:
 * Ajax data, stylesheet, file download
 */
-function sb_hijack() {
+function hb_hijack() {
 
 	global $filetypes, $wpdb, $sermon_domain;
 
@@ -182,7 +185,7 @@ function sb_hijack() {
 *
 * Sets up most Wordpress hooks and filters, depending on whether request is for front or back end.
 */
-function sb_sermon_init () {
+function hb_sermon_init () {
 	global $sermon_domain, $wpdb, $defaultMultiForm, $defaultSingleForm, $defaultStyle;
 	$sermon_domain = 'sermon-browser';
 	if (IS_MU) {
@@ -530,7 +533,7 @@ function sb_shortcode($atts, $content=null) {
 /**
 * Registers the Sermon Browser widgets
 */
-function sb_widget_sermon_init() {
+function hb_widget_sermon_init() {
 	global $sermon_domain;
 	//Sermons Widget
 	if (!$options = sb_get_option('sermons_widget_options'))
