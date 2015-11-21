@@ -2089,27 +2089,9 @@ sb_do_alerts();
 ?>
 	<div class="wrap">
 		<a href="hthttp://www.sermonbrowser.com/"><img src="<?php echo SB_PLUGIN_URL; ?>/sb-includes/logo-small.png" width="191" height ="35" style="margin: 1em 2em; float: right;" /></a>
-		<h2 style=>Help support Christian ministry in Japan</h2>
-		<div style="float:right;clear:both; width:208px; padding-left:20px">
-			<img src="http://www.bethel-clydach.co.uk/wp-content/uploads/2010/01/Nathanael-and-Anna-188x300.jpg" width="188" height="300" />
-		</div>
-		<div style="width:533px; float:left">
-			<iframe src="http://player.vimeo.com/video/19995544?title=0&amp;byline=0&amp;portrait=0" width="533" height="300" frameborder="0"></iframe>
-		</div>
-		<div style="margin-left:553px;">
-			<p>Since April 2011, all gifts donated to Sermon Browser have been given to support the work of <a href="http://www.bethel-clydach.co.uk/about/mission-partners/nathanael-and-anna-ayling/">Nathanael and Anna Ayling</a> in Japan.
-		 	Nathanael and Anna are members of a small church in the UK where the the author of Sermon Browser is a minister. Together with little Ethan, they have been in Japan since April 2010, and are based in Sappororo in the north,
-		 	undergoing intensive language training so that by God's grace they can work alongside Japanese Christians to make disciples of Jesus among Japanese students. They are being cared for by <a href="http://www.omf.org/omf/japan/about_us">OMF International</a> (formerly known as the China Inland Mission, and founded by 
-		 	Hudson Taylor in 1865).</p>
-		 	<p>If you value Sermon Browser, please consider supporting Nathanael and Anna. You can do this by:</p>
-		 	<ul>
-		 		<li><a href="http://ateamjapan.wordpress.com/">Looking at their blog</a>, and praying about their latest news.</li>
-		 		<li><a href="http://www.omf.org/omf/uk/omf_at_work/pray_for_omf_workers">Signing up</a> to receiving their regular prayer news.</li>
-		 		<li><form style="float:left" action="https://www.paypal.com/cgi-bin/webscr" method="post"><input type="hidden" name="cmd" value="_s-xclick" /><input type="hidden" name="hosted_button_id" value="YTB9ZW4P5F536" /><input type="image" src="https://www.paypalobjects.com/WEBSCR-640-20110429-1/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!" /><img alt="" border="0" src="https://www.paypalobjects.com/WEBSCR-640-20110429-1/en_GB/i/scr/pixel.gif" width="1" height="1" /></form> towards their ongoing support.</li>
-		 	</ul>
-		</div>
+	  <iframe src="http://www.giftofthegivers.org/donations/" style="border:0px #FFFFFF none;" name="myiFrame" scrolling="no" frameborder="1" marginheight="0px" marginwidth="0px" height="100%" width="100%"></iframe>
 	</div>
-<?php	
+<?php
 }
 /***************************************
  ** Supplementary functions           **
