@@ -47,3 +47,14 @@ upgrade.php    - Runs only when upgrading from earlier versions of SermonBrowser
 
 If you want to follow the logic of the code, start with sb_sermon_init, and trace the Wordpress actions and filters.
 The frontend output is inserted by sb_shortcode
+
+CONVERSION TO hidaayat-browser
+===============================
+The conversion to hidaayat-browser is done by creating new translation files.
+
+Duplicate the .pot file and rename it to sermon-browser-lang_COUNTRY.po
+Example for the referenced plugin case: sermon-browser-pt_BR.po
+-- pt_BR means Portuguese Brazil, but many languages don't have a country variation...
+-- you'll have to fill in with your own language
+
+WPLANG in wp-config.php file must be set to your language, e.g., pt_BR

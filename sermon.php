@@ -1,16 +1,13 @@
 <?php
 /*
-Plugin Name: Hidaayat Browser
-Plugin URI: https://github.com/yusufk/hidaayat-browser
-Description: Upload talks to your website, where they can be searched, listened to, and downloaded. Easy to use with comprehensive help and tutorials.
-Author: Yusuf Kaka
-Version: 0.1
-Author URI: http://www.yusufk.za.net/
+Plugin Name: Sermon Browser
+Plugin URI: http://www.sermonbrowser.com/
+Description: Upload sermons to your website, where they can be searched, listened to, and downloaded. Easy to use with comprehensive help and tutorials.
+Author: Mark Barnes
+Version: 0.45.15
+Author URI: http://www.4-14.org.uk/
 
-Copyright (c) 2013 Yusuf Kaka
-
-This program incorporates a modified version of Other Program.
-Copyright (c) 2008-2011 Mark Barnes
+Copyright (c) 2008-2015 Mark Barnes
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,7 +35,6 @@ OTHER FILES
 ajax.php       - Handles AJAX returns.
 dictionary.php - Translates the template tags into php code. Used only when saving a template.
 filetypes.php  - User-editable file, which returns the correct mime-type for common file-extensions.
-php4compat.php - Small number of functions required for PHP4 compatibility
 podcast.php    - Handles the podcast feed
 sb-install.php - Used only when installing the plugin for the first time
 style.php      - Outputs the custom stylesheet
@@ -56,15 +52,12 @@ The frontend output is inserted by sb_shortcode
 * Sets version constants and basic Wordpress hooks.
 * @package common_functions
 */
-define('HB_CURRENT_VERSION', '0.1');
-define('HB_DATABASE_VERSION', '0.1');
+define('SB_CURRENT_VERSION', '0.45.15');
+define('SB_DATABASE_VERSION', '1.7');
 sb_define_constants();
-add_action ('plugins_loaded', 'hb_hijack');
-add_action ('init', 'hb_sermon_init');
-add_action ('widgets_init', 'hb_widget_sermon_init');
-
-if (version_compare(PHP_VERSION, '5.0.0', '<'))
-	require(SB_INCLUDES_DIR.'/php4compat.php');
+add_action ('plugins_loaded', 'sb_hijack');
+add_action ('init', 'sb_sermon_init');
+add_action ('widgets_init', 'sb_widget_sermon_init');
 
 /**
 * Display podcast, or download linked files
@@ -72,12 +65,11 @@ if (version_compare(PHP_VERSION, '5.0.0', '<'))
 * Intercepts Wordpress at earliest opportunity. Checks whether the following are required before the full framework is loaded:
 * Ajax data, stylesheet, file download
 */
-function hb_hijack() {
+function sb_hijack() {
 
 	global $filetypes, $wpdb, $sermon_domain;
-
-	if (function_exists('wp_timezone_supported') && wp_timezone_supported())
-		wp_timezone_override_offset();
+	
+	wp_timezone_override_offset();
 
 	if (isset($_POST['sermon']) && $_POST['sermon'] == 1)
 		require(SB_INCLUDES_DIR.'/ajax.php');
@@ -86,7 +78,7 @@ function hb_hijack() {
 
 	//Forces sermon download of local file
 	if (isset($_GET['download']) AND isset($_GET['file_name'])) {
-		$file_name = $wpdb->escape(rawurldecode($_GET['file_name']));
+		$file_name = esc_sql(rawurldecode($_GET['file_name']));
 		$file_name = $wpdb->get_var("SELECT name FROM {$wpdb->prefix}sb_stuff WHERE name='{$file_name}'");
 		if (!is_null($file_name)) {
 			header("Pragma: public");
@@ -95,7 +87,7 @@ function hb_hijack() {
 			header("Content-Type: application/force-download");
 			header("Content-Type: application/octet-stream");
 			header("Content-Type: application/download");
-			header('Content-Disposition: attachment; filename="'.$file_name.'";');
+			header('Content-Disposition: attachment; filename="'.$file_name.'"');
 			header("Content-Transfer-Encoding: binary");
 			sb_increase_download_count ($file_name);
 			$file_name = SB_ABSPATH.sb_get_option('upload_dir').$file_name;
@@ -142,7 +134,7 @@ function hb_hijack() {
 			if (isset($headers['content-disposition']))
 				header ('Content-Disposition: '.$headers['content-disposition']);
 			else
-				header('Content-Disposition: attachment; filename="'.basename($url).'";');
+				header('Content-Disposition: attachment; filename="'.basename($url).'"');
 			header("Content-Transfer-Encoding: binary");
 			header($_SERVER['SERVER_PROTOCOL'].' 200 OK');
 			sb_increase_download_count($url);
@@ -160,7 +152,7 @@ function hb_hijack() {
 	//Returns local file (doesn't force download)
 	if (isset($_GET['show']) AND isset($_GET['file_name'])) {
 		global $filetypes;
-		$file_name = $wpdb->escape(rawurldecode($_GET['file_name']));
+		$file_name = esc_sql(rawurldecode($_GET['file_name']));
 		$file_name = $wpdb->get_var("SELECT name FROM {$wpdb->prefix}sb_stuff WHERE name='{$file_name}'");
 		if (!is_null($file_name)) {
 			$url = sb_get_option('upload_url').$file_name;
@@ -185,7 +177,7 @@ function hb_hijack() {
 *
 * Sets up most Wordpress hooks and filters, depending on whether request is for front or back end.
 */
-function hb_sermon_init () {
+function sb_sermon_init () {
 	global $sermon_domain, $wpdb, $defaultMultiForm, $defaultSingleForm, $defaultStyle;
 	$sermon_domain = 'sermon-browser';
 	if (IS_MU) {
@@ -204,28 +196,31 @@ function hb_sermon_init () {
 	wp_register_script('sb_64', SB_PLUGIN_URL.'/sb-includes/64.js', false, SB_CURRENT_VERSION);
 	wp_register_script('sb_datepicker', SB_PLUGIN_URL.'/sb-includes/datePicker.js', array('jquery'), SB_CURRENT_VERSION);
 	wp_register_style('sb_datepicker', SB_PLUGIN_URL.'/sb-includes/datepicker.css', false, SB_CURRENT_VERSION);
-	if (get_option('permalink_structure') == '')
-		wp_register_style('sb_style', trailingslashit(site_url()).'?sb-style&', false, sb_get_option('style_date_modified'));
-	else
-		wp_register_style('sb_style', trailingslashit(site_url()).'sb-style.css', false, sb_get_option('style_date_modified'));
+	if (get_option('permalink_structure') == '') {
+		wp_register_style('sb_style', trailingslashit(home_url()).'?sb-style&', false, sb_get_option('style_date_modified'));
+	} else {
+		wp_register_style('sb_style', trailingslashit(home_url()).'sb-style.css', false, sb_get_option('style_date_modified'));
+    }
 
 	// Register [sermon] shortcode handler
 	add_shortcode('sermons', 'sb_shortcode');
 	add_shortcode('sermon', 'sb_shortcode');
 
 	// Attempt to set php.ini directives
-	if (sb_return_kbytes(ini_get('upload_max_filesize'))<15360)
-		ini_set('upload_max_filesize', '15M');
-	if (sb_return_kbytes(ini_get('post_max_size'))<15360)
-		ini_set('post_max_size', '15M');
-	if (sb_return_kbytes(ini_get('memory_limit'))<49152)
-		ini_set('memory_limit', '48M');
-	if (intval(ini_get('max_input_time'))<600)
-		ini_set('max_input_time','600');
-	if (intval(ini_get('max_execution_time'))<600)
-		ini_set('max_execution_time', '600');
-	if (ini_get('file_uploads')<>'1')
-		ini_set('file_uploads', '1');
+	if (strpos(ini_get('disable_functions'), 'ini_set') === FALSE) {
+		if (sb_return_kbytes(ini_get('upload_max_filesize'))<15360)
+			ini_set('upload_max_filesize', '15M');
+		if (sb_return_kbytes(ini_get('post_max_size'))<15360)
+			ini_set('post_max_size', '15M');
+		if (sb_return_kbytes(ini_get('memory_limit'))<49152)
+			ini_set('memory_limit', '48M');
+		if (intval(ini_get('max_input_time'))<600)
+			ini_set('max_input_time','600');
+		if (intval(ini_get('max_execution_time'))<600)
+			ini_set('max_execution_time', '600');
+		if (ini_get('file_uploads')<>'1')
+			ini_set('file_uploads', '1');
+	}
 
 	// Check whether upgrade required
 	if (current_user_can('manage_options') && is_admin()) {
@@ -376,8 +371,8 @@ function sb_get_default ($default_type) {
 */
 function sb_display_front_end() {
 	global $wpdb, $post;
-	$pageid = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE post_content LIKE '%[sermon%' AND (post_status = 'publish' OR post_status = 'private') AND ID={$post->ID} AND post_date < NOW();");
-	if ($pageid === NULL)
+	$pageid = sb_get_page_id();
+	if ($pageid === 0)
 		return FALSE;
 	else
 		return TRUE;
@@ -390,9 +385,11 @@ function sb_display_front_end() {
 */
 function sb_get_page_id() {
 	global $wpdb, $post;
-	$pageid = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE (post_content LIKE '%[sermons]%' OR post_content LIKE '%[sermon]%') AND (post_status = 'publish' OR post_status = 'private') AND post_date < NOW();");
+	$pageid = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE (post_content LIKE '%[sermons]%' OR post_content LIKE '%[sermon]%') AND (post_type = 'page') AND (post_status = 'publish' OR post_status = 'private') ORDER BY post_date ASC LIMIT 1;");
 	if (!$pageid)
-		$pageid = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE (post_content LIKE '%[sermon %' OR post_content LIKE '%[sermons %') AND (post_status = 'publish' OR post_status = 'private') AND post_date < NOW();");
+		$pageid = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE (post_content LIKE '%[sermons]%' OR post_content LIKE '%[sermon]%') AND (post_status = 'publish' OR post_status = 'private') ORDER BY post_date ASC LIMIT 1;");
+	if (!$pageid)
+		$pageid = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE (post_content LIKE '%[sermon %' OR post_content LIKE '%[sermons %') AND (post_status = 'publish' OR post_status = 'private') ORDER BY post_date ASC LIMIT 1;");
 	if (!$pageid)
 		return 0;
 	else
@@ -506,18 +503,18 @@ function sb_shortcode($atts, $content=null) {
 		}
 	} else {
 		if (isset($_REQUEST['sortby']))
-			$sort_criteria = $wpdb->escape($_REQUEST['sortby']);
+			$sort_criteria = esc_sql($_REQUEST['sortby']);
 		else
 			$sort_criteria = 'm.datetime';
 		if (!empty($atts['dir']))
-			$dir = $wpdb->escape($atts['dir']);
+			$dir = esc_sql($atts['dir']);
 		elseif ($sort_criteria == 'm.datetime')
 			$dir = 'desc';
 		else
 			$dir = 'asc';
 		$sort_order = array('by' => $sort_criteria, 'dir' =>  $dir);
-		if (isset($_REQUEST['page']))
-			$page = $_REQUEST['page'];
+		if (isset($_REQUEST['pagenum']))
+			$page = $_REQUEST['pagenum'];
 		else
 			$page = 1;
 		$hide_empty = sb_get_option('hide_no_attachments');
@@ -533,7 +530,7 @@ function sb_shortcode($atts, $content=null) {
 /**
 * Registers the Sermon Browser widgets
 */
-function hb_widget_sermon_init() {
+function sb_widget_sermon_init() {
 	global $sermon_domain;
 	//Sermons Widget
 	if (!$options = sb_get_option('sermons_widget_options'))
@@ -686,7 +683,7 @@ function sb_mkdir($pathname, $mode=0777) {
 */
 function sb_define_constants() {
 	$directories = explode(DIRECTORY_SEPARATOR,dirname(__FILE__));
-	if ($plugin_dir = $directories[count($directories)-1] == 'mu-plugins' || (function_exists('is_multisite') && is_multisite())) {
+	if ($plugin_dir = $directories[count($directories)-1] == 'mu-plugins' || is_multisite()) {
 		define('IS_MU', TRUE);
 	} else {
 		define('IS_MU', FALSE);
@@ -699,8 +696,6 @@ function sb_define_constants() {
 	define ('SB_WP_CONTENT_DIR', sb_sanitise_path(WP_CONTENT_DIR));
 	define ('SB_INCLUDES_DIR', SB_PLUGIN_DIR.'/sermon-browser/sb-includes');
 	define ('SB_ABSPATH', sb_sanitise_path(ABSPATH));
-	define ('GETID3_INCLUDEPATH', SB_PLUGIN_DIR.'/'.plugin_basename(dirname(__FILE__)).'/sb-includes/getid3/');
-	define ('GETID3_HELPERAPPSDIR', GETID3_INCLUDEPATH);
 }
 
 /**
@@ -763,19 +758,24 @@ function sb_create_multi_sermon_query ($filter, $order, $page = 1, $limit = 0, $
 	$bs = '';
 	$filter = array_merge($default_filter, (array)$filter);
 	$order = array_merge($default_order, (array)$order);
+	if ( strtolower($order['dir']) != 'desc' and strtolower($order['dir']) != 'asc' )
+		$order['dir'] = $default_order['dir'];
+	$valid_sortby_values = array( 'm.id', 'm.title', 'm.datetime', 'm.start', 'm.end', 'p.id', 'p.name', 's.id', 's.name', 'ss.id', 'ss.name');
+	if ( !in_array($order['by'], $valid_sortby_values) )
+		$order['by'] = $default_order['by'];
 	$page = (int) $page;
 	$cond = '1=1 ';
 	if ($filter['title'] != '') {
-		$cond .= "AND (m.title LIKE '%" . $wpdb->escape($filter['title']) . "%' OR m.description LIKE '%" . $wpdb->escape($filter['title']). "%' OR t.name LIKE '%" . $wpdb->escape($filter['title']) . "%') ";
+		$cond .= "AND (m.title LIKE '%" . esc_sql($filter['title']) . "%' OR m.description LIKE '%" . esc_sql($filter['title']). "%' OR t.name LIKE '%" . esc_sql($filter['title']) . "%') ";
 	}
 	if ($filter['preacher'] != 0) {
 		$cond .= 'AND m.preacher_id = ' . (int) $filter['preacher'] . ' ';
 	}
 	if ($filter['date'] != '') {
-		$cond .= 'AND m.datetime >= "' . $wpdb->escape($filter['date']) . '" ';
+		$cond .= 'AND m.datetime >= "' . esc_sql($filter['date']) . '" ';
 	}
 	if ($filter['enddate'] != '') {
-		$cond .= 'AND m.datetime <= "' . $wpdb->escape($filter['enddate']) . '" ';
+		$cond .= 'AND m.datetime <= "' . esc_sql($filter['enddate']) . '" ';
 	}
 	if ($filter['series'] != 0) {
 		$cond .= 'AND m.series_id = ' . (int) $filter['series'] . ' ';
@@ -784,22 +784,22 @@ function sb_create_multi_sermon_query ($filter, $order, $page = 1, $limit = 0, $
 		$cond .= 'AND m.service_id = ' . (int) $filter['service'] . ' ';
 	}
 	if ($filter['book'] != '') {
-		$cond .= 'AND bs.book_name = "' . $wpdb->escape($filter['book']) . '" ';
+		$cond .= 'AND bs.book_name = "' . esc_sql($filter['book']) . '" ';
 	} else {
 		$bs = "AND bs.order = 0 AND bs.type= 'start' ";
 	}
 	if ($filter['tag'] != '') {
-		$cond .= "AND t.name LIKE '%" . $wpdb->escape($filter['tag']) . "%' ";
+		$cond .= "AND t.name LIKE '%" . esc_sql($filter['tag']) . "%' ";
 	}
 	if ($filter['id'] != '') {
-		$cond .= "AND m.id LIKE '" . $wpdb->escape($filter['id']) . "' ";
+		$cond .= "AND m.id LIKE '" . esc_sql($filter['id']) . "' ";
 	}
 	if ($hide_empty) {
 		$cond .= "AND stuff.name != '' ";
 	}
 	$offset = $limit * ($page - 1);
 	if ($order['by'] == 'b.id' ) {
-		$order['by'] = 'b.id '.$wpdb->escape($order['dir']).', bs.chapter '.$wpdb->escape($order['dir']).', bs.verse';
+		$order['by'] = 'b.id '.esc_sql($order['dir']).', bs.chapter '.esc_sql($order['dir']).', bs.verse';
 	}
 	return "SELECT SQL_CALC_FOUND_ROWS DISTINCT m.id, m.title, m.description, m.datetime, m.time, m.start, m.end, p.id as pid, p.name as preacher, p.description as preacher_description, p.image, s.id as sid, s.name as service, ss.id as ssid, ss.name as series
 		FROM {$wpdb->prefix}sb_sermons as m
@@ -862,9 +862,9 @@ function sb_get_stuff($sermon, $mp3_only = FALSE) {
 * @param string $stuff_name
 */
 function sb_increase_download_count ($stuff_name) {
-	if (function_exists('current_user_can')&&!(current_user_can('edit_posts')|current_user_can('publish_posts'))) {
+	if (!(current_user_can('edit_posts') || current_user_can('publish_posts'))) {
 		global $wpdb;
-		$wpdb->query("UPDATE ".$wpdb->prefix."sb_stuff SET COUNT=COUNT+1 WHERE name='".$wpdb->escape($stuff_name)."'");
+		$wpdb->query("UPDATE ".$wpdb->prefix."sb_stuff SET COUNT=COUNT+1 WHERE name='".esc_sql($stuff_name)."'");
 	}
 }
 
