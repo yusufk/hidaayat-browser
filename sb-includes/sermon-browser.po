@@ -33,7 +33,7 @@ msgstr ""
 #: ../sb-includes/admin.php:1262 ../sb-includes/frontend.php:125
 #: ../sb-includes/widget.php:78
 msgid "Sermons"
-msgstr ""
+msgstr "Lectures"
 
 #: ../sermon.php:288 ../sb-includes/frontend.php:122
 msgid "Edit Sermon"
@@ -425,7 +425,7 @@ msgstr ""
 
 #: ../sb-includes/admin.php:199
 msgid "Sermons per page"
-msgstr ""
+msgstr "Lectures"
 
 #: ../sb-includes/admin.php:203
 msgid "Filter type"
@@ -449,7 +449,7 @@ msgstr ""
 
 #: ../sb-includes/admin.php:223
 msgid "Hide sermons without attachments?"
-msgstr ""
+msgstr "Hide lectures without attachments?"
 
 #: ../sb-includes/admin.php:236
 msgid ""
@@ -611,6 +611,8 @@ msgid ""
 "Clicking the %s button below will remove ALL data (sermons, preachers, "
 "series, etc.) from SermonBrowser"
 msgstr ""
+"Clicking the %s button below will remove ALL data (lectures, speakers, "
+"series, etc.) from SermonBrowser"
 
 #: ../sb-includes/admin.php:322 ../sb-includes/admin.php:342
 msgid "Delete all"
@@ -933,7 +935,7 @@ msgstr ""
 
 #: ../sb-includes/admin.php:1175 ../sb-includes/admin.php:1377
 msgid "You do not have the correct permissions to edit sermons"
-msgstr ""
+msgstr "You do not have the correct permissions to edit lectures"
 
 #: ../sb-includes/admin.php:1178
 msgid "Sermon saved to database."
@@ -955,7 +957,7 @@ msgstr ""
 
 #: ../sb-includes/admin.php:1189
 msgid "You do not have the correct permissions to delete sermons"
-msgstr ""
+msgstr "You do not have the correct permissions to delete lectures"
 
 #: ../sb-includes/admin.php:1197
 msgid "Sermon removed from database."
@@ -1110,6 +1112,8 @@ msgid ""
 "%sCreate a page%s that includes the shortcode [sermons], so that "
 "SermonBrowser knows where to display the sermons on your site."
 msgstr ""
+"%sCreate a page%s that includes the shortcode [sermons], so that "
+"SermonBrowser knows where to display the lectures on your site."
 
 #: ../sb-includes/admin.php:2191
 msgid "You have"
@@ -1207,6 +1211,8 @@ msgid ""
 "You will need to set the %s before you can import MP3s and pre-fill the Add "
 "Sermons form."
 msgstr ""
+"You will need to set the %s before you can import MP3s and pre-fill the Add "
+"Lectures form."
 
 #: ../sb-includes/admin.php:2475
 msgid "import options"

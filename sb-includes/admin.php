@@ -2002,7 +2002,7 @@ sb_do_alerts();
 		<a href="http://www.sermonbrowser.com/"><img src="<?php echo SB_PLUGIN_URL; ?>/sb-includes/logo-small.png" width="191" height ="35" style="margin: 1em 2em; float: right;" /></a>
 		<div style="width:45%;float:right;clear:right">
 		<h2>Thank you</h2>
-		<p>A number of individuals and churches have kindly <a href="http://www.sermonbrowser.com/donate/">donated</a> to the development of Sermon Browser. Their support is very much appreciated. Since April 2011, all donations have been sent to <a href="<?php echo admin_url('admin.php?page=sermon-browser/japan.php')?>">support the ministry of Nathanael and Anna Ayling</a> in Japan.</p>
+		<p>A number of individuals and churches have kindly <a href="http://www.giftofthegivers.org/donations/">donated</a> to the development of Sermon Browser. Their support is very much appreciated. Since April 2011, all donations have been sent to <a href="<?php echo admin_url('admin.php?page=sermon-browser/japan.php')?>">support the ministry of Nathanael and Anna Ayling</a> in Japan.</p>
 		<ul style="list-style-type:circle; margin-left: 2em">
 			<li><a href="http://www.cambray.org/" target="_blank">Cambray Baptist Church</a>, UK</li>
 			<li><a href="http://www.bethel-clydach.co.uk/" target="_blank">Bethel Baptist Church</a>, Clydach, UK</li>
@@ -2535,7 +2535,7 @@ function sb_add_contextual_help($help) {
 	$out.= ' | <a href="http://www.sermonbrowser.com/faq/">'.__('Frequently Asked Questions').'</a>';
 	$out.= ' | <a href="http://www.sermonbrowser.com/forum/">'.__('Support Forum').'</a>';
 	$out.= ' | <a href="http://www.sermonbrowser.com/customisation/">'.__('Shortcode syntax').'</a>';
-	$out.= ' | <a href="http://www.sermonbrowser.com/donate/">'.__('Donate').'</a>';
+	$out.= ' | <a href="http://www.giftofthegivers.org/donations/">'.__('Donate').'</a>';
 	$out.= '</p></div>';
 	return $out;
 }
